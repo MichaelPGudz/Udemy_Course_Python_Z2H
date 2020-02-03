@@ -3,8 +3,7 @@ import random
 suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
 ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
 values = {'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5, 'Six': 6, 'Seven': 7, 'Eight': 8, 'Nine': 9, 'Ten': 10,
-          'Jack': 10,
-          'Queen': 10, 'King': 10, 'Ace': 11}
+          'Jack': 10, 'Queen': 10, 'King': 10, 'Ace': 11}
 
 
 class Card():
@@ -69,6 +68,7 @@ class Chips:
         self.total -= self.bet
 
 def take_bet(chips):
+
     while True:
         try:
             chips.bet = int(input("How much would you like to bet? "))
@@ -76,7 +76,7 @@ def take_bet(chips):
             print("Looks like you entered an invalid value - please try again.")
         else:
             if chips.bet > chips.total:
-                print("It looks like you don't have enough chips for a bet - please enter your bet again.")
+                print(f"It looks like you don't have enough chips for a bet - {chips.total} please enter your bet again.")
                 continue
             else:
                 print(f"Your bet - {chips.bet} chips - has been accepted.")
@@ -134,42 +134,44 @@ def push():
 #Chips deposit
 player_deposit = int(input("Please enter how many chips would you like to start with?: "))
 
+# Set up the Player's chips
+player_chips = Chips(player_deposit)
+
 #Game logic
 while True:
     print("Welcome to Blackjack game!")
     playing = True
 
     # Create & shuffle the deck, deal two cards to each player
-    cards = Card(suits,ranks)
     deck = Deck()
     deck.shuffle()
+
     player = Hand()
     dealer = Hand()
-    player.add_card(deck.deal())
-    dealer.add_card(deck.deal())
+
+    #First deal
     player.add_card(deck.deal())
     dealer.add_card(deck.deal())
 
-    # Set up the Player's chips
-    player_chips = Chips(player_deposit)
-
+    #Second deal
+    player.add_card(deck.deal())
+    dealer.add_card(deck.deal())
 
     # Prompt the Player for their bet
     take_bet(player_chips)
+
     # Show cards (but keep one dealer card hidden)
-    show_some(player, dealer)
+    show_some(player,dealer)
 
     while playing:  # recall this variable from our hit_or_stand function
 
         # Prompt for Player to Hit or Stand
         hit_or_stand(deck,player)
-        # player.adjust_for_ace()
-        # dealer.adjust_for_ace()
 
         # Show cards (but keep one dealer card hidden)
         show_some(player, dealer)
 
-        # If player's hand exceeds 21, run player_busts() and break out of loop
+        # Player_busts if his hands exceeds value of 21
         if player.value > 21:
             player_busts(player_chips)
             break
@@ -194,9 +196,9 @@ while True:
             push()
 
         # Inform Player of their chips total
-        print(f"You still have {player_chips.total} chips.")
+        print(f"\nYou still have {player_chips.total} chips.")
 
-        # Ask to play again
+        #Ask to play again
 
         while True:
             answer = input("Would you like to play again? (y/n)")
@@ -208,4 +210,3 @@ while True:
                 continue
             break
         break
-
